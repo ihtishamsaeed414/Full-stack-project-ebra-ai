@@ -3,21 +3,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCartStore } from "@/store/cartStore";
+import { CartItem as StoreCartItem } from "@/types";
 
-interface CartItem {
-  id: number;
-  title: string;
-  price: number;
-  image: string;
-  quantity: number;
-  color: string;
+interface CartItem extends Omit<StoreCartItem, 'color'> {
+  color?: string;
 }
+
 // =============================
 // Order details
 // =============================
 
 export default function OrderCompletePage() {
-  const { items } = useCartStore();
+  const { items, getTotal } = useCartStore();
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -58,8 +55,8 @@ export default function OrderCompletePage() {
         </div>
 
         {/* Order Items */}
-        <div className="flex justify-center mb-8">
-          {items.map((item: CartItem) => (
+        <div className="flex justify-center gap-4 flex-wrap mb-8">
+          {items.map((item) => (
             <div key={item.id} className="relative">
               <div className="relative w-24 h-24">
                 <Image
@@ -84,11 +81,11 @@ export default function OrderCompletePage() {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-600">Date:</span>
-            <span className="font-medium">October 19, 2023</span>
+            <span className="font-medium">{new Date().toLocaleDateString()}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-600">Total:</span>
-            <span className="font-medium">$1,345.00</span>
+            <span className="font-medium">${getTotal().toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-600">Payment method:</span>
